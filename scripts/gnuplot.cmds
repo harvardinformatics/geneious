@@ -1,0 +1,9 @@
+set xdata time
+set timefmt "%Y-%m"
+set ylabel 'average number of licenses checked out'
+set xlabel 'date'
+set yrange [0:50]
+plot 'month.dat' u 1:2 w linesp
+set terminal postscript eps enhanced color font 'Helvetica,10'
+set output 'geneious_month_count.2011-2014.ps'
+replot
