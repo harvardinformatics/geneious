@@ -20,6 +20,7 @@ def main(args):
     monthdata   = {}
     monthcounts = {}
 
+    maxdaydata  = {}
     #Flexible License Manager status on Tue 11/15/2011 13:30
     #Users of floating_license:  (Total of 10000 licenses issued;  Total of 0 licenses in use)
     #Flexible License Manager status on Tue 11/15/2011 14:00
@@ -63,23 +64,36 @@ def main(args):
            date  = str(year) + "-" + str(month) + "-" + str(day)
            monthdate = str(year) + "-" + str(month)
 
-           if date not in daydata:
+           valid = True
+
+           if args.weekday:
+              if weekday == "Sun" or weekday == "Sat":
+                 valid = False;
+
+           if valid:
+            if date not in daydata:
               daydata[date] = 0
 
-           if date not in daycounts:
+            if date not in daycounts:
               daycounts[date] = 0
 
-           daydata[date]   = daydata[date] + count
-           daycounts[date] = daycounts[date] + 1
+            if date not in maxdaydata:
+              maxdaydata[date] = 0
 
-           if monthdate not in monthdata:
-              monthdata[monthdate] = 0
+            daydata[date]   = daydata[date] + count
+            
+            if count > maxdaydata[date]:
+              maxdaydata[date] = count
 
-           if monthdate not in monthcounts:
-              monthcounts[monthdate] = 0
+            if monthdate not in monthdata:
+               monthdata[monthdate] = 0
 
-           monthdata[monthdate]   = monthdata[monthdate] + count
-           monthcounts[monthdate] = monthcounts[monthdate] + 1
+            if monthdate not in monthcounts:
+               monthcounts[monthdate] = 0
+
+            monthdata[monthdate]   = monthdata[monthdate] + count
+            monthcounts[monthdate] = monthcounts[monthdate] + 1
+
 
     if args.day:
       for key in sorted(daydata):
@@ -89,6 +103,10 @@ def main(args):
       for key in sorted(monthdata):
         print "%s\t%d"%(key,int(monthdata[key]/monthcounts[key]))
 
+    if args.max:
+       for key in sorted(maxdaydata):
+        print "%s\t%d"%(key,int(maxdaydata[key]))
+        
 if __name__ == '__main__':
 
     parser        = ArgumentParser(description = 'Geneious count log parser')
@@ -96,6 +114,8 @@ if __name__ == '__main__':
     parser.add_argument('-f','--file'   , help='The Geneious count log file')
     parser.add_argument('-d','--day'   , help='Print average license usage count in 30 minutes over 1 day',action='store_true')
     parser.add_argument('-m','--month'   , help='Print average license usage count in 30 minutes over 1 month',action='store_true')
+    parser.add_argument('-w','--weekday' , help='Print average license usage count in 30 minutes for weekdays only',action='store_true')
+    parser.add_argument('-M','--max' , help='Print max license usage count in 30 minutes for each day',action='store_true')
     
     args = parser.parse_args()
 
