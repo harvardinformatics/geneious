@@ -51,6 +51,8 @@ def main(args):
                hour  = int(match.group(5)) 
                mins  = int(match.group(6)) 
 
+               hour  = str(hour).zfill(2)
+               mins  = str(mins).zfill(2)
                day   = str(day).zfill(2)
                month = str(month).zfill(2)
 
@@ -70,6 +72,11 @@ def main(args):
               if weekday == "Sun" or weekday == "Sat":
                  valid = False;
 
+           if args.time:
+              timestr = "%s:%s"%(hour,mins)
+              if timestr != args.time:
+                valid = False
+ 
            if valid:
             if date not in daydata:
               daydata[date] = 0
@@ -81,6 +88,7 @@ def main(args):
               maxdaydata[date] = 0
 
             daydata[date]   = daydata[date] + count
+            daycounts[date]   = daycounts[date] + 1
             
             if count > maxdaydata[date]:
               maxdaydata[date] = count
@@ -116,6 +124,7 @@ if __name__ == '__main__':
     parser.add_argument('-m','--month'   , help='Print average license usage count in 30 minutes over 1 month',action='store_true')
     parser.add_argument('-w','--weekday' , help='Print average license usage count in 30 minutes for weekdays only',action='store_true')
     parser.add_argument('-M','--max' , help='Print max license usage count in 30 minutes for each day',action='store_true')
+    parser.add_argument('-t','--time' , help='Print license usage at a certain time')
     
     args = parser.parse_args()
 
